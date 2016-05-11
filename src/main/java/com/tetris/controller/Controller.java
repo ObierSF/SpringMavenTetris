@@ -1,14 +1,12 @@
 package com.tetris.controller;
 
+import com.tetris.controller.database.TableCreator;
 import com.tetris.tile.move.Move;
 import com.tetris.view.GameView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -18,9 +16,7 @@ import java.util.Observer;
 
 import static java.lang.Thread.sleep;
 
-/**
- * Created by User on 16.04.2016.
- */
+
 @Service
 @EnableScheduling
 @PropertySource("config.properties")
@@ -40,17 +36,24 @@ public class Controller extends JFrame implements Observer {
     private KeyController keyController;
     @Autowired
     private DatabaseController databaseController;
+    @Autowired
+    private TableCreator tableCreator;
+    private JScrollPane scrollPane;
+    private JButton button;
+    private boolean gameOver = false;
 
     public Controller() {
         super("Tetris");
     }
 
     @PostConstruct
-    private void init() {
+    private void init(){
         scoreObserver.init(boardController);
         tileController.init(boardController.getBoard());
         moveController.addObserver(this);
         addKeyListener(keyController);
+//        JTable table = tableCreator.createTableFromScoreList();
+//        scrollPane = new JScrollPane(table);
         add(gameView);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
@@ -60,28 +63,39 @@ public class Controller extends JFrame implements Observer {
     }
 
     public void run() {
-        try {
-            if (setNewTile()) {
-                gameView.repaint();
-                gameLoop();
-            }
-        } catch (InterruptedException e) {
-            System.out.println("Exception: " + e);
+        if (setNewTile()) {
+            gameView.repaint();
+            gameLoop();
         }
     }
 
     @Scheduled(initialDelay = fallTime, fixedRate = fallTime)
-    private void gameLoop() throws InterruptedException {
+    private void gameLoop() {
+        if (!gameOver) {
             moveController.moveTile(Move.FALL);
             afterMoveUpdate();
+        }
     }
 
     private void gameOver() {
-        tileController.setLastTile();
-        gameView.repaint();
-        databaseController.addScoreToDatabase(scoreObserver.getScore());
-        JOptionPane.showMessageDialog(null, "Game Over\n Your Score: " + scoreObserver.getScore());
-        System.exit(0);
+        if (!gameOver) {
+            gameOver = true;
+            tileController.setLastTile();
+            gameView.repaint();
+            databaseController.addScoreToDatabase(scoreObserver.getScore());
+            gameView.setVisible(false);
+            JOptionPane.showMessageDialog(null, "Game Over\n Your Score: " + scoreObserver.getScore());
+            switchToTableView();
+        }
+    }
+
+    public void switchToTableView() {
+        JTable table = tableCreator.createTableFromScoreList();
+        scrollPane = new JScrollPane(table);
+        remove(gameView);
+        add(scrollPane);
+        pack();
+        scrollPane.setVisible(true);
     }
 
     public void update(Observable o, Object arg) {

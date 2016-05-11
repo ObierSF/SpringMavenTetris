@@ -19,9 +19,9 @@ import java.awt.*;
 public class GameView extends JPanel {
     private static final int dimensionWidth = 400;
     private static final int dimensionHeight = 640;
-    @Value("10")
+    @Value("${startProperties.width}")
     private int width = 10;
-    @Value("16")
+    @Value("${startProperties.height}")
     private int height = 16;
     private CompositeFieldView compositeFieldView;
     @Autowired

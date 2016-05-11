@@ -12,7 +12,6 @@ import javax.persistence.*;
 public class Score {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name = "id", unique = true, nullable = false)
     @Getter @Setter private long id;
     @Getter @Setter private String scoreDate;
     @Getter @Setter private int score;
