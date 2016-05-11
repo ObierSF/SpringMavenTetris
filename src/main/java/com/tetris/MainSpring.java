@@ -3,6 +3,7 @@ package com.tetris;
 import com.tetris.controller.Controller;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.AbstractApplicationContext;
 
 
 public class MainSpring {

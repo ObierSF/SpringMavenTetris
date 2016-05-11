@@ -1,7 +1,9 @@
 package com.tetris.field;
 
-import com.tetris.field.Field;
+import com.tetris.MainConfiguration;
 import com.tetris.field.neighbourstrategy.NeighbourCreator;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * Created by User on 17.03.2016.
@@ -21,7 +23,7 @@ public class SurroundingFields {
         try {
             return neighbourCreator.getNeighbour(neighbour, this);
         } catch (Exception e) {
-            System.out.println("Exception: " + e);
+            System.out.println("Neighbour exception: " + e);
         }
         return null;
     }

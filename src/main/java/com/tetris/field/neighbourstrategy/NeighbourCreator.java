@@ -3,6 +3,7 @@ package com.tetris.field.neighbourstrategy;
 import com.tetris.field.Field;
 import com.tetris.field.Neighbour;
 import com.tetris.field.SurroundingFields;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.List;
 /**
  * Created by User on 12.04.2016.
  */
+@Service
 public class NeighbourCreator {
     @SuppressWarnings("unchecked")
     private static final List<NeighbourStrategy> neighbourStrategy =

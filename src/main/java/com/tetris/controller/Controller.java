@@ -4,7 +4,11 @@ import com.tetris.tile.move.Move;
 import com.tetris.view.GameView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -18,10 +22,10 @@ import static java.lang.Thread.sleep;
  * Created by User on 16.04.2016.
  */
 @Service
+@EnableScheduling
 @PropertySource("config.properties")
 public class Controller extends JFrame implements Observer {
-    @Value("1000")
-    private int fallTime;
+    private final long fallTime = 1000;
     @Autowired
     private BoardController boardController;
     @Autowired
@@ -34,7 +38,8 @@ public class Controller extends JFrame implements Observer {
     private GameView gameView;
     @Autowired
     private KeyController keyController;
-    private boolean isGameOver = false;
+    @Autowired
+    private DatabaseController databaseController;
 
     public Controller() {
         super("Tetris");
@@ -65,19 +70,18 @@ public class Controller extends JFrame implements Observer {
         }
     }
 
+    @Scheduled(initialDelay = fallTime, fixedRate = fallTime)
     private void gameLoop() throws InterruptedException {
-        while(!isGameOver) {
-            sleep(fallTime);
             moveController.moveTile(Move.FALL);
             afterMoveUpdate();
-        }
     }
 
     private void gameOver() {
         tileController.setLastTile();
         gameView.repaint();
-        isGameOver = true;
-        System.out.println("Game Over");
+        databaseController.addScoreToDatabase(scoreObserver.getScore());
+        JOptionPane.showMessageDialog(null, "Game Over\n Your Score: " + scoreObserver.getScore());
+        System.exit(0);
     }
 
     public void update(Observable o, Object arg) {
@@ -107,7 +111,7 @@ public class Controller extends JFrame implements Observer {
     private void tilePlaceOperation() {
         boardController.searchForFullRows(tileController.getFields());
         scoreObserver.sumScore();
-        boardController.clearFullRows(scoreObserver.getRows());
         tileController.placeTile();
+        boardController.clearFullRows(scoreObserver.getRows());
     }
 }

@@ -5,6 +5,8 @@ import com.tetris.field.Field;
 import com.tetris.field.Neighbour;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -16,9 +18,9 @@ import java.util.Observable;
  */
 @Service
 public class BoardController extends Observable {
-    @Value("10")
+    @Value("${startProperties.width}")
     private int width;
-    @Value("16")
+    @Value("${startProperties.height}")
     private int height;
     @Getter private Board board;
 

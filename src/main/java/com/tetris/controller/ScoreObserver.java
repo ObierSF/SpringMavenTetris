@@ -2,6 +2,7 @@ package com.tetris.controller;
 
 import com.tetris.Board;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -14,8 +15,10 @@ import java.util.Observer;
  */
 @Service
 public class ScoreObserver implements Observer {
-    private final int width = 10;
-    private final int rowValue = 100;
+    @Value("${startProperties.width}")
+    private int width;
+    @Value("${gameProperties.rowValue}")
+    private int rowValue;
     @Getter private int score;
     @Getter private List<Integer> rows;
 
