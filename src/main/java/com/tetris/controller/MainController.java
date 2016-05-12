@@ -1,6 +1,6 @@
 package com.tetris.controller;
 
-import com.tetris.controller.database.TableCreator;
+import com.tetris.view.TableCreator;
 import com.tetris.tile.move.Move;
 import com.tetris.view.GameView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import static java.lang.Thread.sleep;
 @Service
 @EnableScheduling
 @PropertySource("config.properties")
-public class Controller extends JFrame implements Observer {
+public class MainController extends JFrame implements Observer {
     private final long fallTime = 1000;
     @Autowired
     private BoardController boardController;
@@ -41,7 +41,7 @@ public class Controller extends JFrame implements Observer {
     private JScrollPane scrollPane;
     private boolean gameOver = false;
 
-    public Controller() {
+    public MainController() {
         super("Tetris");
     }
 

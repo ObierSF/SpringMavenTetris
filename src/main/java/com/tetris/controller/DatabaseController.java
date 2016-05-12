@@ -1,13 +1,10 @@
 package com.tetris.controller;
 
-import com.tetris.controller.database.Score;
+import com.tetris.database.Score;
+import com.tetris.database.ScoreService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -16,14 +13,8 @@ import java.util.List;
 
 @Service
 public class DatabaseController {
-    private EntityManagerFactory entityManagerFactory;
-    private EntityManager entityManager;
-
-    @PostConstruct
-    public void init() {
-        entityManagerFactory = Persistence.createEntityManagerFactory("scoreDatabase");
-        entityManager = entityManagerFactory.createEntityManager();
-    }
+    @Autowired
+    private ScoreService scoreService;
 
     public void addScoreToDatabase(int scoreValue) {
         Score score = new Score();
@@ -33,17 +24,10 @@ public class DatabaseController {
         score.setScoreDate(reportDate);
         score.setScore(scoreValue);
 
-        entityManager.getTransaction().begin();
-        entityManager.persist(score);
-        entityManager.getTransaction().commit();
+        scoreService.add(score);
     }
 
     public List<Score> getScoreTable() {
-        TypedQuery<Score> query = entityManager.createQuery("SELECT s FROM Score s ORDER BY score DESC", Score.class);
-        query.setMaxResults(10);
-        List<Score> scores = query.getResultList();
-        entityManager.close();
-        entityManagerFactory.close();
-        return scores;
+        return scoreService.getTop10Scores();
     }
 }

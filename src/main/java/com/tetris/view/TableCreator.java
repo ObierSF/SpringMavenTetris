@@ -1,6 +1,8 @@
-package com.tetris.controller.database;
+package com.tetris.view;
 
 import com.tetris.controller.DatabaseController;
+import com.tetris.database.Score;
+import com.tetris.database.ScoreDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

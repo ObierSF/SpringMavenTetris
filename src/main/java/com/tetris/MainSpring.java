@@ -1,15 +1,14 @@
 package com.tetris;
 
-import com.tetris.controller.Controller;
+import com.tetris.controller.MainController;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.AbstractApplicationContext;
 
 
 public class MainSpring {
     public static void main(String[] args) {
         ApplicationContext context = new AnnotationConfigApplicationContext(MainConfiguration.class);
-        Controller controller = context.getBean("controller", Controller.class);
-        controller.run();
+        MainController mainController = context.getBean("mainController", MainController.class);
+        mainController.run();
     }
 }

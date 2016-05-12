@@ -1,18 +1,17 @@
-package com.tetris.controller.database;
+package com.tetris.database;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 
-/**
- * Created by User on 10.05.2016.
- */
 @Entity
 public class Score {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Getter @Setter private long id;
+    @Column
     @Getter @Setter private String scoreDate;
+    @Column
     @Getter @Setter private int score;
 }
