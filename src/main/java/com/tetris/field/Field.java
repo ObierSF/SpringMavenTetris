@@ -4,11 +4,15 @@ import com.tetris.Board;
 import com.tetris.borderstrategy.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import java.awt.Color;
 
-/**
- * Created by User on 06.03.2016.
- */
+@Service
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class Field {
     private final int height = 16;
     private final int width = 10;
@@ -17,10 +21,10 @@ public class Field {
     @Getter private int position;
     @Getter private Color color;
     @Getter private Border border;
-    @Getter @Setter private SurroundingFields surroundingFields;
+    @Autowired
+    @Getter private SurroundingFields surroundingFields;
 
-
-    public Field(int position) {
+    public void init(int position) {
         this.position = position;
         partOfTile = false;
         placedField = false;
@@ -76,7 +80,7 @@ public class Field {
     }
 
     public void determineSurroundingFields(Board board) {
-        surroundingFields = border.determineTheSurroundingFields(board, position);
+        surroundingFields = border.determineTheSurroundingFields(board, position, surroundingFields);
     }
 
     public boolean isEmpty() {

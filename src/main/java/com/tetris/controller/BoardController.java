@@ -4,30 +4,21 @@ import com.tetris.Board;
 import com.tetris.field.Field;
 import com.tetris.field.Neighbour;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Observable;
 
-/**
- * Created by User on 20.04.2016.
- */
 @Service
 public class BoardController extends Observable {
     @Value("${startProperties.width}")
     private int width;
     @Value("${startProperties.height}")
     private int height;
+    @Autowired
     @Getter private Board board;
-
-    @PostConstruct
-    public void init() {
-        board = new Board(width * height);
-    }
 
     public void searchForFullRows(List<Field> fields) {
         for (Field field : fields) {

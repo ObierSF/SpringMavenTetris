@@ -1,14 +1,15 @@
 package com.tetris.field;
 
-import com.tetris.MainConfiguration;
 import com.tetris.field.neighbourstrategy.NeighbourCreator;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
-/**
- * Created by User on 17.03.2016.
- */
+@Service
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SurroundingFields {
+    @Autowired
     private NeighbourCreator neighbourCreator;
     public Field upper;
     public Field right;

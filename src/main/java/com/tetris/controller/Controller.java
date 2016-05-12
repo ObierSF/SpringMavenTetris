@@ -39,7 +39,6 @@ public class Controller extends JFrame implements Observer {
     @Autowired
     private TableCreator tableCreator;
     private JScrollPane scrollPane;
-    private JButton button;
     private boolean gameOver = false;
 
     public Controller() {
@@ -52,8 +51,6 @@ public class Controller extends JFrame implements Observer {
         tileController.init(boardController.getBoard());
         moveController.addObserver(this);
         addKeyListener(keyController);
-//        JTable table = tableCreator.createTableFromScoreList();
-//        scrollPane = new JScrollPane(table);
         add(gameView);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);

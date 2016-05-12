@@ -1,28 +1,27 @@
 package com.tetris;
 
 import com.tetris.field.Field;
+import com.tetris.field.FieldListFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by User on 06.03.2016.
- */
+@Service
 public class Board {
     private List<Field> board;
+    @Autowired
+    private FieldListFactory fieldListFactory;
+    @Value("${startProperties.fieldsNumber}")
     private int fieldsNumber;
 
-    public Board(int fieldsNumber) {
-        this.fieldsNumber = fieldsNumber;
-        board = new ArrayList<Field>(fieldsNumber);
-        createBoard(fieldsNumber);
+    @PostConstruct
+    private void init() {
+        board = fieldListFactory.getFilledBoard(fieldsNumber);
         setSurroundingFieldsForFields();
-    }
-
-    private void createBoard(int fieldsNumber) {
-        for (int i=0; i<fieldsNumber; i++) {
-            board.add(new Field(i));
-        }
     }
 
     public Field getField(int fieldPosition) {
