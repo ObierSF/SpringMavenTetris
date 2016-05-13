@@ -1,20 +1,22 @@
 package com.tetris.controller;
 
-import com.tetris.view.TableCreator;
 import com.tetris.tile.move.Move;
+import com.tetris.view.TableCreator;
 import com.tetris.view.GameView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import rx.Scheduler;
+import rx.Subscription;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.util.Observable;
 import java.util.Observer;
-
-import static java.lang.Thread.sleep;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -66,24 +68,28 @@ public class MainController extends JFrame implements Observer {
         }
     }
 
-    @Scheduled(initialDelay = fallTime, fixedRate = fallTime)
     private void gameLoop() {
-        if (!gameOver) {
-            moveController.moveTile(Move.FALL);
-            afterMoveUpdate();
-        }
+        final Scheduler.Worker worker = Schedulers.newThread().createWorker();
+        Subscription subscription = worker.schedulePeriodically(new Action0() {
+            public void call() {
+                if (!gameOver) {
+                    moveController.moveTile(Move.FALL);
+                    afterMoveUpdate();
+                } else {
+                    worker.unsubscribe();
+                }
+            }
+        }, fallTime, fallTime, TimeUnit.MILLISECONDS);
     }
 
     private void gameOver() {
-        if (!gameOver) {
-            gameOver = true;
-            tileController.setLastTile();
-            gameView.repaint();
-            databaseController.addScoreToDatabase(scoreObserver.getScore());
-            gameView.setVisible(false);
-            JOptionPane.showMessageDialog(null, "Game Over\n Your Score: " + scoreObserver.getScore());
-            switchToTableView();
-        }
+        gameOver = true;
+        tileController.setLastTile();
+        gameView.repaint();
+        databaseController.addScoreToDatabase(scoreObserver.getScore());
+        gameView.setVisible(false);
+        JOptionPane.showMessageDialog(null, "Game Over\n Your Score: " + scoreObserver.getScore());
+        switchToTableView();
     }
 
     public void switchToTableView() {
@@ -99,14 +105,16 @@ public class MainController extends JFrame implements Observer {
         afterMoveUpdate();
     }
 
-    private void afterMoveUpdate() {
+    private boolean afterMoveUpdate() {
         gameView.repaint();
         if (!tileController.isFallPossible()) {
             tilePlaceOperation();
             if (!setNewTile()) {
                 gameOver();
+                return true;
             }
         }
+        return false;
     }
 
     public boolean setNewTile() {

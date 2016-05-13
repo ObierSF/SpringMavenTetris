@@ -15,16 +15,10 @@ public class ScoreDaoImpl implements ScoreDao {
     private SessionFactory sessionFactory;
 
     public void add(Score score) {
-//        Session session = sessionFactory.openSession();
-//        Transaction transaction = session.getTransaction();
-//        transaction.begin();
-//        session.save(score);
-//        transaction.commit();
         sessionFactory.getCurrentSession().save(score);
     }
 
     public List<Score> getTop10Scores() {
-//        Query query = sessionFactory.openSession().createQuery("from Score order by score desc");
         Query query = sessionFactory.getCurrentSession().createQuery("from Score order by score desc");
         query.setMaxResults(10);
         return query.list();
